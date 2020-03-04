@@ -1,6 +1,7 @@
 import socket
 import sys
 import traceback
+import mimetypes
 
 
 def response_ok(body=b"This is a minimal response", mimetype=b"text/plain"):
@@ -42,7 +43,11 @@ def response_not_found():
     """Returns a 404 Not Found response"""
 
     # TODO: Implement response_not_found
-    return b""
+    return b"\r\n".join([
+        b"HTTP/1.1 404 Not Found",
+        b"",
+        b"Response not found"
+    ])
 
 
 def parse_request(request):
