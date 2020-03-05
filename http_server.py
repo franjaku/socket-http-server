@@ -96,33 +96,25 @@ def response_path(path):
     """
     home_directory = 'C:\\Users\\USer\\Documents\\UW_Python_Certificate\\Course_3\\' \
                      'socket-http-server\\socket-http-server\\webroot'
-    content = ''
-    if path == '/':
-        with os.scandir(home_directory) as hd:
-            for entry in hd:
-                content += '{}\r\n'.format(entry.name)
-        content = content.encode('utf8')
-        mime_type = b"plain-text\r\n"
-    else:
-        q = Path(home_directory + path)
-        print('absolute path = {}'.format(q.resolve()))
-        if q.exists():
-            # file_name, file_type = path.split('.')
-            if q.is_dir():
-                print('q is dir')
-                with os.scandir(home_directory + path) as hd:
-                    for entry in hd:
-                        print(entry.name)
-                        content += '{}\r\n'.format(entry.name)
-                mime_type = b"plain-text\r\n"
-                content = content.encode('utf8')
-            else:
-                content = q.read_bytes()
-                mime_type = mimetypes.guess_type(path)
-                mime_type = mime_type[0].encode('utf8')
+    content = b""
+    q = Path(home_directory + path)
+
+    if q.exists():
+        if q.is_dir():
+            print('q is dir')
+            with os.scandir(home_directory + path) as hd:
+                for entry in hd:
+                    print(entry.name)
+                    content += '{}\r\n'.format(entry.name).encode('utf8')
+            mime_type = b"plain-text\r\n"
         else:
-            # print('raising NameError in response_path(path)')
-            raise NameError
+            mime_type = mimetypes.guess_type(path)
+            mime_type = mime_type[0]  # .encode('utf8')
+            mime_type = mime_type.encode('utf8')
+            content = q.read_bytes()
+    else:
+        # print('raising NameError in response_path(path)')
+        raise NameError
 
     # TODO: Fill in the appropriate content and mime_type give the path.
     #   See the assignment guidelines for help on "mapping mime-types", though
@@ -133,6 +125,15 @@ def response_path(path):
     
     # content = b"not implemented"
     # mime_type = b"not implemented"
+    # if path == '/':
+    #     with os.scandir(home_directory) as hd:
+    #         for entry in hd:
+    #             content += '{}\r\n'.format(entry.name)
+    #     # content = content.encode('utf8')
+    #     mime_type = "plain-text\r\n"
+    # else:
+    #     q = Path(home_directory + path)
+    #     print('absolute path = {}'.format(q.resolve()))
 
     return content, mime_type
 
